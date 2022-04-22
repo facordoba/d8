@@ -1,27 +1,44 @@
 import express  from "express";
 import API from "./API.js";
+import Carrito from "./carrito.js";
 const app = express()
-const api = express.Router()
+const productos = express.Router()
+const carrito = express.Router()
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
-app.use(express.static('public'))
-app.use('/api/productos', api)
+app.use('/api/productos', productos)
+app.use('/api/carrito', carrito)
 const apiClass = new API()
-api.get('/',(req, res)=>{
+const carritoClass = new Carrito()
+productos.get('/',(req, res)=>{
     res.send(apiClass.getAll())
 })
-api.get('/:id',(req, res)=>{
+productos.get('/:id',(req, res)=>{
     res.send(apiClass.getById(req.params.id))
 })
-api.post('/',(req, res)=>{
-    apiClass.add(req.body)
-    res.redirect('../../index.html')
+productos.post('/',(req, res)=>{
+    res.send(apiClass.add(req.body))
 })
-api.put('/:id',(req, res)=>{
+productos.put('/:id',(req, res)=>{
     res.send(apiClass.update(req.params.id, req.body))
 })
-api.delete('/:id',(req, res)=>{
+productos.delete('/:id',(req, res)=>{
     res.send(apiClass.delete(parseInt(req.params.id)))
+})
+carrito.post('/', (req, res)=>{
+    res.send(carritoClass.createCart())
+})
+carrito.delete('/:id', (req, res)=>{
+    res.send(carritoClass.deleteCart(req.params.id))
+})
+carrito.get('/:id/productos', (req, res)=>{
+    res.send(carritoClass.getProducts(req.params.id))
+})
+carrito.post('/:id/productos', (req, res)=>{
+    res.send(carritoClass.addProducts(req.params.id, req.body))
+})
+carrito.delete('/:id/productos/:id_prod', (req, res)=>{
+    res.send(carritoClass.deleteProducts(req.params.id, req.params.id_prod))
 })
 const PORT = process.env.PORT || 8080
 const server = app.listen(PORT, ()=>{console.log(`listening on port: ${PORT}`)})

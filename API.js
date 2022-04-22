@@ -13,9 +13,13 @@ class API{
         const lengthBefore = API.productos.length
         API.id++ 
         const productToAdd = {
-            title: product.title, 
-            price: product.price, 
+            timestamp: Date.now(),
+            nombre: product.nombre, 
+            descripcion: product.descripcion, 
             thumbnail: product.thumbnail,
+            codigo: product.codigo,
+            precio: product.precio,
+            stock: product.stock,
             id: API.id
         }
         API.productos.push(productToAdd)
