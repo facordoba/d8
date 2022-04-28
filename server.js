@@ -4,10 +4,16 @@ import Carrito from "./carrito.js";
 const app = express()
 const productos = express.Router()
 const carrito = express.Router()
+const admin = true
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
-app.use('/api/productos', productos)
+app.use('/api/productos', productos, )
 app.use('/api/carrito', carrito)
+productos.use((req, res, next)=>{
+    if(admin){
+        next()
+    }else return {error: -1, descripcion: `ruta ${req.url} metodo ${req.method} no autorizada`}
+})
 const apiClass = new API()
 const carritoClass = new Carrito()
 productos.get('/',(req, res)=>{

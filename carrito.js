@@ -1,3 +1,5 @@
+import fs from "fs"
+
 class Carrito{
     static id = 0
     static carritos = [] 
@@ -8,6 +10,11 @@ class Carrito{
             timestamp: Date.now(),
             productos: []
         })
+        try {
+            fs.writeFileSync(`./persistencia.txt`, JSON.stringify([]))
+        } catch (error) {
+            throw error
+        }
         return Carrito.id.toString()
     }
     deleteCart(id){
@@ -32,6 +39,14 @@ class Carrito{
     addProducts(id, product){
         if(Carrito.id >= id){
             Carrito.carritos.find(e=>e.id == id).productos.push(product)
+            try {
+                const data = fs.readFileSync(`./persistencia.txt`, 'utf-8')
+                const arrayObject = JSON.parse(data)
+                arrayObject.push(product)
+                fs.writeFileSync(`./persistencia.txt`, JSON.stringify(arrayObject))
+            } catch (error) {
+                throw error
+            }
             return 'hecho'
         }else{
             return 'no existe carrito con el id buscado'
@@ -57,21 +72,5 @@ class Carrito{
         return Carrito.carritos
     }
 }
-/* 
-console.log(new Carrito().createCart())
-console.log(new Carrito().createCart())
-console.log(new Carrito().createCart())
-console.log(new Carrito().deleteProducts(1, 1))
-console.log(new Carrito().addProducts(1, {id:1, nombre:'facundo'}))
-console.log(new Carrito().addProducts(1, {id:2, nombre:'roman'}))
-console.log(new Carrito().addProducts(1, {id:3, nombre:'roman'}))
-console.log(new Carrito().addProducts(1, {id:4, nombre:'roman'}))
-console.log(new Carrito().addProducts(1, {id:5, nombre:'roman'}))
-console.log(new Carrito().getProducts(1))
-console.log(new Carrito().getProducts(2))
-console.log(new Carrito().deleteProducts(1, 1))
-console.log(new Carrito().deleteCart(3))
-console.log(new Carrito().deleteProducts(1, 5))
-console.log(new Carrito().getProducts(1))
-console.log(new Carrito().getAllCarts()) */
+
 export default Carrito
